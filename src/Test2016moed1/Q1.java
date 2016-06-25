@@ -8,6 +8,7 @@ public class Q1 {
 	boolean isCycle;
 	int color[],pred[];
 	ArrayList<Integer> graph[];
+	String cycle;
 	public Q1(ArrayList<Integer> graph[]) {
 		this.graph = graph;
 		color = new int[graph.length];
@@ -15,6 +16,7 @@ public class Q1 {
 		Arrays.fill(color, 0);
 		Arrays.fill(pred, -1);
 		isCycle = false;
+		cycle = "[";
 	}
 	public static boolean hasCycle(ArrayList<Integer> graph[]){
 		Q1 q = new Q1(graph);
@@ -27,6 +29,7 @@ public class Q1 {
 		}
 		 
 		 System.out.println(Arrays.toString(q.pred));
+		 DFS(0,q);
 		 return q.isCycle;
 		 
 		
@@ -35,12 +38,22 @@ public class Q1 {
 	private static void DFS(int i,Q1 q) {
 		q.color[i] = 1;
 		for (Integer u  : q.graph[i]) {
+			if(q.color[u] == 1 && u != q.pred[i] && q.isCycle==false) {
+				q.isCycle = true;
+				q.cycle += u;
+				int par = i;
+				while(par != -1){
+					q.cycle+= q.pred[i];
+					par = q.pred[i];
+				}
+				q.cycle+="]";
+			}
 			if(q.color[u] == 0){
 				q.color[u] = 1;
 				q.pred[u] = i;
-				DFS(i,q);
+				DFS(u,q);
 			}
-			if(q.color[u] == 1 && u != q.pred[i] ) q.isCycle = true;
+			
 		}
 		
 	}
@@ -59,14 +72,15 @@ public class Q1 {
 	}
 	public static String getCycle(ArrayList<Integer> graph[]){
 		if(!hasCycle(graph)) return "[]";
-		boolean isVisited[] = new boolean[graph.length];
-		int parent[] = new int[graph.length];
-		Arrays.fill(parent, -1);
-		Arrays.fill(isVisited, false);
-		parent[0] = 0;
-		//hasCycle(0, isVisited, parent, graph);
-		System.out.println(Arrays.toString(parent));
-		return null;
+		Q1 q = new Q1(graph);
+		
+		 for (int i = 0; i < graph.length; i++) {
+			if(q.color[i]==0)
+			{
+				DFS(i,q);
+			}
+		}
+		return q.cycle;
 	}
 	
 	
@@ -89,6 +103,6 @@ public class Q1 {
 
 	public static void main(String[] args) {
 		ArrayList<Integer> g[] = initGraph();
-		System.out.println(hasCycle(g));
+		System.out.println(getCycle(g));
 	}
 }
