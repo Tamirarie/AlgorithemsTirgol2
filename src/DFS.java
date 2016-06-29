@@ -1,66 +1,43 @@
-package DFS;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class DFS {
-	private final int WHITE = 0 , GRAY = 1, BLACK = 2;
+	final int WHITE = 0, GRAY = 1,BLACK = 2;
+	int [] color,pred,first,last;
 	ArrayList<Integer> g[];
-	int [] pred,color,first,last;
-	int time ;
-	boolean isCycle;
-	String cycle;
+	private int time;
 	
 	public DFS(ArrayList<Integer> g[]) {
 		this.g = g;
 		init();
 		for (int i = 0; i < g.length; i++) {
-			if(color[i] == WHITE) buildDFS(i);
+			if(color[i] == WHITE) DFSalgo(i);
 		}
-		
 	}
-	
-	private void buildDFS(int source) {
+
+	private void DFSalgo(int source) {
 		first[source] = ++time;
 		color[source] = GRAY;
 		for (int v : g[source]) {
 			if(color[v] == WHITE){
 				pred[v] = source;
-				buildDFS(v);
-			}
-			else if(color[v] == GRAY && v != pred[source] && !isCycle){
-				System.out.println(v+ "tried to be visited from "+ source);
-				isCycle = true;
-				int temp = source;
-				while(temp!=-1){
-					cycle += temp;
-					temp = pred[temp];
-				}
-				cycle += source;
+				DFSalgo(v);
 			}
 		}
-		last[source] = ++time;
 		color[source] = BLACK;
-		
+		last[source] = ++time;		
 	}
 
 	private void init() {
-		color = new int[g.length];
-		pred = new int[g.length];
-		first = new int[g.length];
-		last = new int[g.length];
-		Arrays.fill(pred, -1);
+		int n = g.length;
 		time = 0;
-		isCycle = false;
-		cycle = "";
+		color = new int[n];
+		pred = new int[n];
+		first = new int[n];
+		last = new int[n];
+		Arrays.fill(color, WHITE);
+		Arrays.fill(pred, -1);
 	}
-
-	public static void main(String[] args) {
-		ArrayList<Integer> g[] = initGraph();
-		DFS d = new DFS(g);
-		d.printMats();
-	}
-	
 	public static ArrayList<Integer>[] initGraph(){
 		int n = 5;
 		ArrayList []graph = new ArrayList[n];
@@ -77,10 +54,10 @@ public class DFS {
 
 	}
 	
-	private static int getDist(ArrayList<Integer> g[],int source, int dest) {
+	public static void main(String[] args) {
+		ArrayList<Integer> g[] = initGraph();
 		DFS d = new DFS(g);
 		d.printMats();
-		return d.first[dest];
 	}
 
 	private void printMats() {
